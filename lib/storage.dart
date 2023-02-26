@@ -1,36 +1,26 @@
 import 'package:flutter/material.dart';
 
 class VolleyScoreTeam {
-  final String name;
-  final List<Player> players;
+  List<Player> players;
+  String name;
   int score = 0;
 
   VolleyScoreTeam(this.name, this.players);
-
-  void addPoint() {
-    score++;
-  }
-
-  void removePoint() {
-    score--;
-  }
 }
 
 class VolleyScoreMatch {
-  final DateTime date;
-  final List<Player> players;
-  late VolleyScoreTeam team1;
-  late VolleyScoreTeam team2;
+  late DateTime date;
+  VolleyScoreTeam team1;
+  VolleyScoreTeam team2;
 
-  void randomizeTeams() {
-    players.shuffle();
-    int half = players.length ~/ 2;
-    team1 = VolleyScoreTeam('Team 1', players.sublist(0, half));
-    team2 = VolleyScoreTeam('Team 2', players.sublist(half));
-  }
+  // get players
+  List<Player> get players => [
+        ...team1.players,
+        ...team2.players,
+      ];
 
-  VolleyScoreMatch(this.date, this.players) {
-    randomizeTeams();
+  VolleyScoreMatch(this.team1, this.team2) {
+    date = DateTime.now();
   }
 }
 
@@ -43,12 +33,26 @@ class Player {
 
 class PlayerMatchesStorage with ChangeNotifier {
   final List<VolleyScoreMatch> _matches = [
-    VolleyScoreMatch(DateTime.now(), [
-      Player('Player 1'),
-      Player('Player 2'),
-      Player('Player 3'),
-      Player('Player 4'),
-    ]),
+    VolleyScoreMatch(
+      VolleyScoreTeam(
+        'Los Cojos',
+        [
+          Player('Player 1'),
+          Player('Player 2'),
+          Player('Player 3'),
+          Player('Player 4'),
+        ],
+      ),
+      VolleyScoreTeam(
+        'A caso',
+        [
+          Player('Player 5'),
+          Player('Player 6'),
+          Player('Player 7'),
+          Player('Player 8'),
+        ],
+      ),
+    ),
   ];
   final List<Player> _players = [
     Player('Player 1'),
@@ -117,13 +121,13 @@ class PlayerMatchesStorage with ChangeNotifier {
   }
 
   void addPoint(VolleyScoreTeam team) {
-    team.addPoint();
+    team.score++;
     notifyListeners();
   }
 
   void removePoint(VolleyScoreTeam team) {
     if (team.score > 0) {
-      team.removePoint();
+      team.score--;
       notifyListeners();
     }
   }

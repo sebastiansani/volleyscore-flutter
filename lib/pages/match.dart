@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:volleyscore/pages/homePage.dart';
 import 'package:volleyscore/storage.dart';
 
 class MatchPage extends StatelessWidget {
@@ -30,7 +31,10 @@ class MatchPage extends StatelessWidget {
     }
     if (isMatchOver) {
       statusWidget = Text('Vince ${winningTeam.name}!',
-          style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Colors.green, fontSize: 50));
+          style: Theme.of(context)
+              .textTheme
+              .headlineLarge
+              ?.copyWith(color: Colors.green, fontSize: 50));
     }
 
     Widget buildScoreCard(VolleyScoreTeam team) {
@@ -80,36 +84,46 @@ class MatchPage extends StatelessWidget {
 
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Match'),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buildScoreCard(match.team1),
-                  Text(' - ', style: titleStyle),
-                  buildScoreCard(match.team2),
-                ],
-              ),
-              const SizedBox(height: 20),
-              statusWidget,
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buildTeamColumn(match.team1),
-                  const SizedBox(width: 40),
-                  buildTeamColumn(match.team2),
-                ],
-              ),
-            ],
+          appBar: AppBar(
+            title: const Text('Match'),
           ),
-        ),
-      ),
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    buildScoreCard(match.team1),
+                    Text(' - ', style: titleStyle),
+                    buildScoreCard(match.team2),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                statusWidget,
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    buildTeamColumn(match.team1),
+                    const SizedBox(width: 40),
+                    buildTeamColumn(match.team2),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                  (route) => false);
+            },
+            child: const Icon(Icons.check),
+          )),
     );
   }
 }

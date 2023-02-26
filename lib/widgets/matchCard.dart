@@ -17,7 +17,7 @@ class MatchCard extends StatelessWidget {
           child: ListTile(
             title: Text(
                 '${match.team1.name} vs ${match.team2.name} (${match.team1.score} - ${match.team2.score})'),
-            subtitle: Text(DateFormat('dd/MM/yyyy').format(match.date)),
+            subtitle: Text(DateFormat('dd/MM/yyyy hh:mm').format(match.date)),
             trailing: IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () {
