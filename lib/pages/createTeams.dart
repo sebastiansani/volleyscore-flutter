@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:volleyscore/pages/match.dart';
+import 'package:volleyscore/pages/matchPage.dart';
 import 'package:volleyscore/storage.dart';
 
-class SelectTeams extends StatefulWidget {
-  const SelectTeams({super.key, required this.players});
+class CreateTeams extends StatefulWidget {
+  const CreateTeams({super.key, required this.players});
   final List<Player> players;
 
   @override
-  State<SelectTeams> createState() => _SelectTeamsState();
+  State<CreateTeams> createState() => _CreateTeamsState();
 }
 
-class _SelectTeamsState extends State<SelectTeams> {
+class _CreateTeamsState extends State<CreateTeams> {
   late TextEditingController team1LabelController;
   late TextEditingController team2LabelController;
   late VolleyScoreTeam team1;
@@ -30,10 +30,17 @@ class _SelectTeamsState extends State<SelectTeams> {
   void initState() {
     super.initState();
     team1 = VolleyScoreTeam('Los Cojos', []);
-    team2 = VolleyScoreTeam('A caso', []);
+    team2 = VolleyScoreTeam('Los Secondos', []);
     team1LabelController = TextEditingController(text: team1.name);
     team2LabelController = TextEditingController(text: team2.name);
     shuffleTeams();
+  }
+
+  @override
+  void dispose() {
+    team1LabelController.dispose();
+    team2LabelController.dispose();
+    super.dispose();
   }
 
   Widget buildTeamColumn(bool isTeam1) {
@@ -77,7 +84,8 @@ class _SelectTeamsState extends State<SelectTeams> {
           }
 
           return Row(
-            mainAxisAlignment: isTeam1 ? MainAxisAlignment.start : MainAxisAlignment.end,
+            mainAxisAlignment:
+                isTeam1 ? MainAxisAlignment.start : MainAxisAlignment.end,
             children: elements,
           );
         }).toList(),
@@ -93,7 +101,7 @@ class _SelectTeamsState extends State<SelectTeams> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('Seleziona team'),
+          title: const Text('Crea team'),
         ),
         body: Padding(
           padding: const EdgeInsets.only(right: 18, left: 18),

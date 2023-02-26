@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:volleyscore/pages/homePage.dart';
 import 'package:volleyscore/storage.dart';
@@ -85,12 +86,17 @@ class MatchPage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
-            title: const Text('Match'),
+            title: const Text('Partita'),
           ),
           body: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
+                Text(
+                  DateFormat('dd/MM/yyyy HH:mm').format(match.date),
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

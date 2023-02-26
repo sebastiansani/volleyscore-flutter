@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:volleyscore/pages/match.dart';
+import 'package:volleyscore/pages/matchPage.dart';
 import 'package:volleyscore/storage.dart';
 
 class MatchCard extends StatelessWidget {

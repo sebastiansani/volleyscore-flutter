@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:volleyscore/pages/selectTeams.dart';
+import 'package:volleyscore/pages/createTeams.dart';
 import 'package:volleyscore/storage.dart';
 
 class SelectPlayers extends StatelessWidget {
@@ -61,7 +61,7 @@ class SelectPlayers extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SelectTeams(players: activePlayers),
+                      builder: (context) => CreateTeams(players: activePlayers),
                     ),
                   );
                 },

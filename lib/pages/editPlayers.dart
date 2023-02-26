@@ -8,62 +8,79 @@ class EditPlayers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fieldText = TextEditingController();
+    final store = Provider.of<PlayerMatchesStorage>(context, listen: true);
 
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Aggiungi giocatori'),
+          title: const Text('Modifica giocatori'),
         ),
         body: Padding(
           padding: const EdgeInsets.only(right: 8, left: 8),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: TextField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Nuovo giocatore',
-                  ),
-                  onSubmitted: (value) {
-                    context
-                        .read<PlayerMatchesStorage>()
-                        .addPlayer(Player(value));
-                    fieldText.clear();
-                  },
-                  controller: fieldText,
-                ),
-              ),
-              Consumer<PlayerMatchesStorage>(
-                builder: (context, store, child) => store.players.isEmpty
+              Expanded(
+                child: store.players.isEmpty
                     ? const Center(child: Text('Nessun giocatore'))
-                    : Expanded(
-                        child: ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          shrinkWrap: true,
-                          itemCount: store.players.length,
-                          itemBuilder: (context, index) {
-                            return SizedBox(
-                              height: 60,
-                              child: Card(
-                                child: ListTile(
-                                  title: Text(store.players[index].name),
-                                  trailing: IconButton(
-                                    icon: const Icon(Icons.delete),
-                                    onPressed: () {
-                                      store.removePlayer(store.players[index]);
-                                    },
-                                  ),
+                    : ListView.builder(
+                        padding: const EdgeInsets.only(bottom: 80),
+                        shrinkWrap: true,
+                        itemCount: store.players.length,
+                        itemBuilder: (context, index) {
+                          return SizedBox(
+                            height: 60,
+                            child: Card(
+                              child: ListTile(
+                                title: Text(store.players[index].name),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    store.removePlayer(store.players[index]);
+                                  },
                                 ),
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       ),
               ),
             ],
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showModalBottomSheet<void>(
+              context: context,
+              builder: (BuildContext context) {
+                void onSubmit() {
+                  final value = fieldText.text;
+                  if (value.isEmpty) return;
+                  context.read<PlayerMatchesStorage>().addPlayer(Player(value));
+                  fieldText.clear();
+                  Navigator.pop(context);
+                }
+
+                return Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        hintText: 'Nuovo giocatore',
+                      ),
+                      onSubmitted: (_) => onSubmit(),
+                      controller: fieldText,
+                      autofocus: true,
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+          child: const Icon(Icons.add),
         ),
       ),
     );

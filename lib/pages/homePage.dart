@@ -10,10 +10,15 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final store = Provider.of<PlayerMatchesStorage>(context, listen: true);
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Volley Score'),
+          title: const Text(
+            'Volley Score',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.edit),
@@ -29,23 +34,29 @@ class HomePage extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.only(right: 8, left: 8),
-          child: Consumer<PlayerMatchesStorage>(
-            builder: (context, store, child) => store.matches.isEmpty
-                ? const Center(child: Text('No matches yet'))
-                : Flex(
-                    direction: Axis.vertical,
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 80),
-                          itemCount: store.matches.length,
-                          itemBuilder: (context, index) {
-                            return MatchCard(match: store.matches[index]);
-                          },
-                        ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  'Partite recenti:',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+              ),
+              Expanded(
+                child: store.matches.isEmpty
+                    ? const Center(child: Text('Nessuna partita'))
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.only(bottom: 80),
+                        itemCount: store.matches.length,
+                        itemBuilder: (context, index) {
+                          return MatchCard(match: store.matches[index]);
+                        },
                       ),
-                    ],
-                  ),
+              ),
+            ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
