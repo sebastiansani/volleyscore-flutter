@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
             if (snapshot.hasData) {
               final store =
                   Provider.of<PlayerMatchesStorage>(context, listen: false);
-              store.loadPlayers(snapshot.data!);
+              store.loadPrefs(snapshot.data!);
               return const HomePage();
             } else {
               return const Center(

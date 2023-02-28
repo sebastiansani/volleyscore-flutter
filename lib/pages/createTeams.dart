@@ -30,7 +30,7 @@ class _CreateTeamsState extends State<CreateTeams> {
   void initState() {
     super.initState();
     team1 = VolleyScoreTeam('Los Cojos', []);
-    team2 = VolleyScoreTeam('Los Secondos', []);
+    team2 = VolleyScoreTeam('Bomberos', []);
     team1LabelController = TextEditingController(text: team1.name);
     team2LabelController = TextEditingController(text: team2.name);
     shuffleTeams();
@@ -95,8 +95,6 @@ class _CreateTeamsState extends State<CreateTeams> {
 
   @override
   Widget build(BuildContext context) {
-    final store = Provider.of<PlayerMatchesStorage>(context, listen: true);
-
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -143,7 +141,6 @@ class _CreateTeamsState extends State<CreateTeams> {
           child: const Icon(Icons.check),
           onPressed: () {
             final match = VolleyScoreMatch(team1, team2);
-            store.addMatch(match);
             Navigator.push(
               context,
               MaterialPageRoute(

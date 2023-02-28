@@ -67,9 +67,17 @@ class Player {
 }
 
 class PlayerMatchesStorage with ChangeNotifier {
+  late List<VolleyScoreMatch> _matches;
+  late List<Player> _players;
   late SharedPreferences _prefs;
-  void loadPlayers(prefs) {
+
+  void loadPrefs(prefs) {
     _prefs = prefs;
+    loadPlayers();
+    loadMatches();
+  }
+
+  void loadPlayers() {
     final playersString = _prefs.getString('players');
     if (playersString != null) {
       _players = (jsonDecode(playersString) as List)
@@ -83,62 +91,47 @@ class PlayerMatchesStorage with ChangeNotifier {
   void savePlayers() {
     _prefs.setString('players', jsonEncode(_players));
   }
+  void loadMatches() {
+    final matchesString = _prefs.getString('matches');
+    if (matchesString != null) {
+      _matches = (jsonDecode(matchesString) as List)
+          .map((match) => VolleyScoreMatch.fromJson(match))
+          .toList();
+    } else {
+      _matches = [];
+    }
+  }
 
-  final List<VolleyScoreMatch> _matches = [
-    VolleyScoreMatch(
-      VolleyScoreTeam(
-        'Los Cojos',
-        [
-          Player('Player 1'),
-          Player('Player 2'),
-          Player('Player 3'),
-          Player('Player 4'),
-        ],
-      ),
-      VolleyScoreTeam(
-        'A caso',
-        [
-          Player('Player 5'),
-          Player('Player 6'),
-          Player('Player 7'),
-          Player('Player 8'),
-        ],
-      ),
-    ),
-  ];
-  late List<Player> _players;
+  void saveMatches() {
+    _prefs.setString('matches', jsonEncode(_matches));
+  }
 
   List<VolleyScoreMatch> get matches => _matches;
   List<Player> get players => _players;
 
-  List<VolleyScoreMatch> getPlayerMatches(Player player) {
-    return _matches.where((match) => match.players.contains(player)).toList();
-  }
+  // List<VolleyScoreMatch> getPlayerMatches(Player player) {
+  //   return _matches.where((match) => match.players.contains(player)).toList();
+  // }
 
-  int getPlayerNumberOfWonMatches(Player player) {
-    return getPlayerMatches(player)
-            .where((match) => match.team1.players.contains(player))
-            .where((match) => match.team1.score > match.team2.score)
-            .length +
-        getPlayerMatches(player)
-            .where((match) => match.team2.players.contains(player))
-            .where((match) => match.team2.score > match.team1.score)
-            .length;
-  }
+  // int getPlayerNumberOfWonMatches(Player player) {
+  //   return getPlayerMatches(player)
+  //           .where((match) => match.team1.players.contains(player))
+  //           .where((match) => match.team1.score > match.team2.score)
+  //           .length +
+  //       getPlayerMatches(player)
+  //           .where((match) => match.team2.players.contains(player))
+  //           .where((match) => match.team2.score > match.team1.score)
+  //           .length;
+  // }
 
-  int getPlayerWinRate(Player player) {
-    int wonMatches = getPlayerNumberOfWonMatches(player);
-    int totalMatches = getPlayerMatches(player).length;
-    if (totalMatches == 0) {
-      return 0;
-    }
-    return (wonMatches / totalMatches * 100).round();
-  }
-
-  void addMatch(VolleyScoreMatch match) {
-    _matches.add(match);
-    notifyListeners();
-  }
+  // int getPlayerWinRate(Player player) {
+  //   int wonMatches = getPlayerNumberOfWonMatches(player);
+  //   int totalMatches = getPlayerMatches(player).length;
+  //   if (totalMatches == 0) {
+  //     return 0;
+  //   }
+  //   return (wonMatches / totalMatches * 100).round();
+  // }
 
   void addPlayer(Player player) {
     _players.add(player);
@@ -160,19 +153,12 @@ class PlayerMatchesStorage with ChangeNotifier {
   void removeMatch(VolleyScoreMatch match) {
     _matches.remove(match);
     notifyListeners();
+    saveMatches();
   }
 
-  void addPoint(VolleyScoreTeam team) {
-    team.score++;
+  void addMatch(VolleyScoreMatch match) {
+    _matches.add(match);
     notifyListeners();
+    saveMatches();
   }
-
-  void removePoint(VolleyScoreTeam team) {
-    if (team.score > 0) {
-      team.score--;
-      notifyListeners();
-    }
-  }
-
-  
 }

@@ -4,14 +4,25 @@ import 'package:provider/provider.dart';
 import 'package:volleyscore/pages/homePage.dart';
 import 'package:volleyscore/storage.dart';
 
-class MatchPage extends StatelessWidget {
+class MatchPage extends StatefulWidget {
   const MatchPage({super.key, required this.propMatch});
   final VolleyScoreMatch propMatch;
 
   @override
+  State<MatchPage> createState() => _MatchPageState();
+}
+
+class _MatchPageState extends State<MatchPage> {
+  late VolleyScoreMatch match;
+
+  @override
+  void initState() {
+    match = widget.propMatch;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final store = Provider.of<PlayerMatchesStorage>(context, listen: true);
-    final match = store.matches.firstWhere((element) => element == propMatch);
     final titleStyle =
         Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 75);
 
@@ -49,7 +60,9 @@ class MatchPage extends StatelessWidget {
                   if (isMatchOver) {
                     return;
                   }
-                  store.addPoint(team);
+                  setState(() {
+                    team.score++;
+                  });
                 },
                 icon: const Icon(Icons.add),
               ),
@@ -59,7 +72,12 @@ class MatchPage extends StatelessWidget {
               ),
               IconButton(
                 onPressed: () {
-                  store.removePoint(team);
+                  if (team.score == 0) {
+                    return;
+                  }
+                  setState(() {
+                    team.score--;
+                  });
                 },
                 icon: const Icon(Icons.remove),
               ),
@@ -121,6 +139,9 @@ class MatchPage extends StatelessWidget {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
+              final store =
+                  Provider.of<PlayerMatchesStorage>(context, listen: false);
+              store.addMatch(match);
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
