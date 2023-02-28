@@ -4,16 +4,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:volleyscore/pages/homePage.dart';
 import 'package:volleyscore/storage.dart';
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => PlayerMatchesStorage(),
-      child: const MyApp(),
-    ),
-  );
+  runApp(ChangeNotifierProvider(
+    create: (context) => PlayerMatchesStorage(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -36,7 +35,21 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           useMaterial3: true,
         ),
-        home: const HomePage(),
+        home: FutureBuilder(
+          future: SharedPreferences.getInstance(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final store =
+                  Provider.of<PlayerMatchesStorage>(context, listen: false);
+              store.loadPlayers(snapshot.data!);
+              return const HomePage();
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
       ),
     );
   }

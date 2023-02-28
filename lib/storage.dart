@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class VolleyScoreTeam {
   List<Player> players;
@@ -6,6 +9,19 @@ class VolleyScoreTeam {
   int score = 0;
 
   VolleyScoreTeam(this.name, this.players);
+
+  VolleyScoreTeam.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        players = (json['players'] as List)
+            .map((player) => Player.fromJson(player))
+            .toList(),
+        score = json['score'];
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'players': players.map((player) => player.toJson()).toList(),
+        'score': score,
+      };
 }
 
 class VolleyScoreMatch {
@@ -22,6 +38,17 @@ class VolleyScoreMatch {
   VolleyScoreMatch(this.team1, this.team2) {
     date = DateTime.now();
   }
+
+  VolleyScoreMatch.fromJson(Map<String, dynamic> json)
+      : team1 = VolleyScoreTeam.fromJson(json['team1']),
+        team2 = VolleyScoreTeam.fromJson(json['team2']),
+        date = DateTime.parse(json['date']);
+
+  Map<String, dynamic> toJson() => {
+        'team1': team1.toJson(),
+        'team2': team2.toJson(),
+        'date': date.toIso8601String(),
+      };
 }
 
 class Player {
@@ -29,9 +56,34 @@ class Player {
   bool isPlaying;
 
   Player(this.name, {this.isPlaying = true});
+
+  Player.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        isPlaying = true;
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+      };
 }
 
 class PlayerMatchesStorage with ChangeNotifier {
+  late SharedPreferences _prefs;
+  void loadPlayers(prefs) {
+    _prefs = prefs;
+    final playersString = _prefs.getString('players');
+    if (playersString != null) {
+      _players = (jsonDecode(playersString) as List)
+          .map((player) => Player.fromJson(player))
+          .toList();
+    } else {
+      _players = [];
+    }
+  }
+
+  void savePlayers() {
+    _prefs.setString('players', jsonEncode(_players));
+  }
+
   final List<VolleyScoreMatch> _matches = [
     VolleyScoreMatch(
       VolleyScoreTeam(
@@ -54,24 +106,7 @@ class PlayerMatchesStorage with ChangeNotifier {
       ),
     ),
   ];
-  final List<Player> _players = [
-    Player('Player 1'),
-    Player('Player 2'),
-    Player('Player 3'),
-    Player('Player 4'),
-    Player('Player 5'),
-    Player('Player 6'),
-    Player('Player 7'),
-    Player('Player 8'),
-    Player('Player 9'),
-    Player('Player 10'),
-    Player('Player 11'),
-    Player('Player 12'),
-    Player('Player 13'),
-    Player('Player 14'),
-    Player('Player 15'),
-    Player('Player 16'),
-  ];
+  late List<Player> _players;
 
   List<VolleyScoreMatch> get matches => _matches;
   List<Player> get players => _players;
@@ -108,10 +143,17 @@ class PlayerMatchesStorage with ChangeNotifier {
   void addPlayer(Player player) {
     _players.add(player);
     notifyListeners();
+    savePlayers();
   }
 
   void removePlayer(Player player) {
     _players.remove(player);
+    notifyListeners();
+    savePlayers();
+  }
+
+  void togglePlayerPlaying(Player player) {
+    player.isPlaying = !player.isPlaying;
     notifyListeners();
   }
 
@@ -132,8 +174,5 @@ class PlayerMatchesStorage with ChangeNotifier {
     }
   }
 
-  void togglePlayerPlaying(Player player) {
-    player.isPlaying = !player.isPlaying;
-    notifyListeners();
-  }
+  
 }

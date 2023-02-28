@@ -56,7 +56,7 @@ class EditPlayers extends StatelessWidget {
                 void onSubmit() {
                   final value = fieldText.text;
                   if (value.isEmpty) return;
-                  context.read<PlayerMatchesStorage>().addPlayer(Player(value));
+                  store.addPlayer(Player(value));
                   fieldText.clear();
                   Navigator.pop(context);
                 }
