@@ -58,8 +58,10 @@ class _CreateTeamsState extends State<CreateTeams> {
             hintText: 'Nome team',
           ),
           onSubmitted: (value) {
-            team.name = value;
-            controller.text = value;
+            setState(() {
+              team.name = value;
+              controller.text = value;
+            });
           },
           controller: controller,
           style: Theme.of(context).textTheme.headlineLarge,

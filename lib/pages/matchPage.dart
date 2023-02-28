@@ -42,11 +42,14 @@ class _MatchPageState extends State<MatchPage> {
           Text('ROJO!', style: titleStyle?.copyWith(color: Colors.red));
     }
     if (isMatchOver) {
-      statusWidget = Text('Vince ${winningTeam.name}!',
-          style: Theme.of(context)
-              .textTheme
-              .headlineLarge
-              ?.copyWith(color: Colors.green, fontSize: 50));
+      statusWidget = Text(
+        'Vince ${winningTeam.name}!',
+        style: Theme.of(context)
+            .textTheme
+            .headlineLarge
+            ?.copyWith(color: Colors.green, fontSize: 50),
+        textAlign: TextAlign.center,
+      );
     }
 
     Widget buildScoreCard(VolleyScoreTeam team) {
@@ -88,16 +91,18 @@ class _MatchPageState extends State<MatchPage> {
     }
 
     Widget buildTeamColumn(VolleyScoreTeam team) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            team.name,
-            style: Theme.of(context).textTheme.headlineLarge,
-          ),
-          const SizedBox(height: 20),
-          ...team.players.map((e) => Text(e.name)).toList(),
-        ],
+      return Expanded(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              team.name,
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+            const SizedBox(height: 20),
+            ...team.players.map((e) => Text(e.name)).toList(),
+          ],
+        ),
       );
     }
 
@@ -128,6 +133,7 @@ class _MatchPageState extends State<MatchPage> {
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     buildTeamColumn(match.team1),
                     const SizedBox(width: 40),
