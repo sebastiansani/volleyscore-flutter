@@ -47,9 +47,12 @@ class _CreateTeamsState extends State<CreateTeams> {
     final team = isTeam1 ? team1 : team2;
     final otherTeam = isTeam1 ? team2 : team1;
     final controller = isTeam1 ? team1LabelController : team2LabelController;
+    final playerCount = team.players.length;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment:
+          isTeam1 ? CrossAxisAlignment.start : CrossAxisAlignment.end,
       children: [
         TextField(
           textAlign: isTeam1 ? TextAlign.start : TextAlign.end,
@@ -66,18 +69,14 @@ class _CreateTeamsState extends State<CreateTeams> {
           controller: controller,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
+        Text(
+          '${team.players.length} Giocator${playerCount == 1 ? 'e' : 'i'}',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         const SizedBox(height: 20),
         ...team.players.map((e) {
           var elements = [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  otherTeam.players.add(e);
-                  team.players.remove(e);
-                });
-              },
-              icon: Icon(isTeam1 ? Icons.arrow_right : Icons.arrow_left),
-            ),
+            Icon(isTeam1 ? Icons.arrow_right : Icons.arrow_left),
             Text(e.name),
           ];
 
@@ -85,10 +84,22 @@ class _CreateTeamsState extends State<CreateTeams> {
             elements = elements.reversed.toList();
           }
 
-          return Row(
-            mainAxisAlignment:
-                isTeam1 ? MainAxisAlignment.start : MainAxisAlignment.end,
-            children: elements,
+          return SizedBox(
+            width: 170,
+            child: Card(
+              child: ListTile(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: elements,
+                ),
+                onTap: () {
+                  setState(() {
+                    otherTeam.players.add(e);
+                    team.players.remove(e);
+                  });
+                },
+              ),
+            ),
           );
         }).toList(),
       ],
@@ -107,21 +118,26 @@ class _CreateTeamsState extends State<CreateTeams> {
           padding: const EdgeInsets.only(right: 18, left: 18),
           child: Flex(
             direction: Axis.vertical,
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Expanded(
                 child: Stack(children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: buildTeamColumn(true),
-                      ),
-                      Expanded(
-                        child: buildTeamColumn(false),
-                      ),
-                    ],
+                  SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 80),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: buildTeamColumn(true),
+                        ),
+                        Expanded(
+                          child: buildTeamColumn(false),
+                        ),
+                      ],
+                    ),
                   ),
-                  Center(
+                  Positioned(
+                    bottom: 10,
+                    right: MediaQuery.of(context).size.width / 2 - 50, 
                     child: Ink(
                       decoration: const ShapeDecoration(
                         shape: CircleBorder(),

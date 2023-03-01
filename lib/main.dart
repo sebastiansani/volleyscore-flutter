@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         }
       },
       child: MaterialApp(
-        title: 'Volleyscore',
+        title: 'VolleyScore',
         theme: ThemeData(
           primarySwatch: Colors.blue,
           useMaterial3: true,

@@ -9,6 +9,8 @@ class SelectPlayers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<PlayerMatchesStorage>(context, listen: true);
+    final activePlayers =
+        store.players.where((player) => player.isPlaying).toList();
 
     return SafeArea(
       child: Scaffold(
@@ -38,7 +40,9 @@ class SelectPlayers extends StatelessWidget {
                                   title: Text(player.name),
                                   trailing: Checkbox(
                                     value: player.isPlaying,
-                                    onChanged: (value) {},
+                                    onChanged: (_) {
+                                      store.togglePlayerPlaying(player);
+                                    },
                                   ),
                                   onTap: () =>
                                       store.togglePlayerPlaying(player),
@@ -50,14 +54,12 @@ class SelectPlayers extends StatelessWidget {
                 ),
               ]),
         ),
-        floatingActionButton: store.players.isEmpty
+        floatingActionButton: activePlayers.isEmpty
             ? Container()
-            : FloatingActionButton(
-                child: const Icon(Icons.check),
+            : FloatingActionButton.extended(
+                label: Text('${activePlayers.length} Giocatori'),
+                icon: const Icon(Icons.check),
                 onPressed: () {
-                  final activePlayers = store.players
-                      .where((player) => player.isPlaying)
-                      .toList();
                   Navigator.push(
                     context,
                     MaterialPageRoute(

@@ -29,6 +29,8 @@ class VolleyScoreMatch {
   VolleyScoreTeam team1;
   VolleyScoreTeam team2;
 
+  String get key => date.toIso8601String();
+
   // get players
   List<Player> get players => [
         ...team1.players,
@@ -54,6 +56,8 @@ class VolleyScoreMatch {
 class Player {
   final String name;
   bool isPlaying;
+
+  String get key => name;
 
   Player(this.name, {this.isPlaying = true});
 
@@ -91,6 +95,7 @@ class PlayerMatchesStorage with ChangeNotifier {
   void savePlayers() {
     _prefs.setString('players', jsonEncode(_players));
   }
+
   void loadMatches() {
     final matchesString = _prefs.getString('matches');
     if (matchesString != null) {
@@ -134,7 +139,12 @@ class PlayerMatchesStorage with ChangeNotifier {
   // }
 
   void addPlayer(Player player) {
-    _players.add(player);
+    final idx = players.indexWhere((p) => p.key == player.key);
+    if (idx != -1) {
+      _players[idx] = player;
+    } else {
+      _players.add(player);
+    }
     notifyListeners();
     savePlayers();
   }
@@ -157,7 +167,12 @@ class PlayerMatchesStorage with ChangeNotifier {
   }
 
   void addMatch(VolleyScoreMatch match) {
-    _matches.add(match);
+    final idx = matches.indexWhere((m) => m.key == match.key);
+    if (idx != -1) {
+      _matches[idx] = match;
+    } else {
+      _matches.add(match);
+    }
     notifyListeners();
     saveMatches();
   }

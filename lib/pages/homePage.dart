@@ -17,11 +17,11 @@ class HomePage extends StatelessWidget {
         appBar: AppBar(
           title: const Text(
             'Volley Score',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.edit),
+              icon: const Icon(Icons.settings),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
