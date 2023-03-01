@@ -28,15 +28,16 @@ class EditPlayers extends StatelessWidget {
                         shrinkWrap: true,
                         itemCount: store.players.length,
                         itemBuilder: (context, index) {
-                          return SizedBox(
-                            height: 60,
-                            child: Card(
+                          final player = store.players[index];
+                          return Card(
+                            child: Center(
                               child: ListTile(
-                                title: Text(store.players[index].name),
+                                title: Text(player.name),
+                                subtitle: Text('Winrate: ${store.getPlayerWinRate(player)}%'),
                                 trailing: IconButton(
                                   icon: const Icon(Icons.delete),
                                   onPressed: () {
-                                    store.removePlayer(store.players[index]);
+                                    store.removePlayer(player);
                                   },
                                 ),
                               ),

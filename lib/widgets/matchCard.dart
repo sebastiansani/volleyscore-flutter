@@ -12,26 +12,25 @@ class MatchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = Provider.of<PlayerMatchesStorage>(context, listen: false);
 
-    return SizedBox(
-      height: 80,
-      child: Card(
-        child: Center(
-          child: ListTile(
-            title: Text(
-                '${match.team1.name} vs ${match.team2.name} (${match.team1.score} - ${match.team2.score})'),
-            subtitle: Text(DateFormat('dd/MM/yyyy hh:mm').format(match.date)),
-            dense: true,
-            trailing: IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                store.removeMatch(match);
-              },
-            ),
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MatchPage(propMatch: match),
-              ),
+    return Card(
+      child: Center(
+        child: ListTile(
+          leading: Text('(${match.team1.score} - ${match.team2.score})',
+              style: const TextStyle(fontWeight: FontWeight.bold)),
+          title: Text('${match.team1.name} vs ${match.team2.name}'),
+          subtitle: Text(
+            DateFormat('dd/MM/yyyy hh:mm').format(match.date),
+          ),
+          trailing: IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              store.removeMatch(match);
+            },
+          ),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MatchPage(propMatch: match),
             ),
           ),
         ),

@@ -31,6 +31,9 @@ class VolleyScoreMatch {
 
   String get key => date.toIso8601String();
 
+  VolleyScoreTeam get winningTeam => team1.score > team2.score ? team1 : team2;
+  VolleyScoreTeam get losingTeam => team1.score > team2.score ? team2 : team1;
+
   // get players
   List<Player> get players => [
         ...team1.players,
@@ -68,6 +71,14 @@ class Player {
   Map<String, dynamic> toJson() => {
         'name': name,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Player && runtimeType == other.runtimeType && key == other.key;
+
+  @override
+  int get hashCode => key.hashCode;
 }
 
 class PlayerMatchesStorage with ChangeNotifier {
@@ -114,35 +125,27 @@ class PlayerMatchesStorage with ChangeNotifier {
   List<VolleyScoreMatch> get matches => _matches;
   List<Player> get players => _players;
 
-  // List<VolleyScoreMatch> getPlayerMatches(Player player) {
-  //   return _matches.where((match) => match.players.contains(player)).toList();
-  // }
+  List<VolleyScoreMatch> getPlayerMatches(Player player) {
+    return _matches.where((match) => match.players.contains(player)).toList();
+  }
 
-  // int getPlayerNumberOfWonMatches(Player player) {
-  //   return getPlayerMatches(player)
-  //           .where((match) => match.team1.players.contains(player))
-  //           .where((match) => match.team1.score > match.team2.score)
-  //           .length +
-  //       getPlayerMatches(player)
-  //           .where((match) => match.team2.players.contains(player))
-  //           .where((match) => match.team2.score > match.team1.score)
-  //           .length;
-  // }
+  int getPlayerNumberOfWonMatches(Player player) {
+    return getPlayerMatches(player)
+        .where((match) => match.winningTeam.players.contains(player))
+        .length;
+  }
 
-  // int getPlayerWinRate(Player player) {
-  //   int wonMatches = getPlayerNumberOfWonMatches(player);
-  //   int totalMatches = getPlayerMatches(player).length;
-  //   if (totalMatches == 0) {
-  //     return 0;
-  //   }
-  //   return (wonMatches / totalMatches * 100).round();
-  // }
+  int getPlayerWinRate(Player player) {
+    int wonMatches = getPlayerNumberOfWonMatches(player);
+    int totalMatches = getPlayerMatches(player).length;
+    if (totalMatches == 0) {
+      return 0;
+    }
+    return (wonMatches / totalMatches * 100).round();
+  }
 
   void addPlayer(Player player) {
-    final idx = players.indexWhere((p) => p.key == player.key);
-    if (idx != -1) {
-      _players[idx] = player;
-    } else {
+    if (!_players.contains(player)) {
       _players.add(player);
     }
     notifyListeners();

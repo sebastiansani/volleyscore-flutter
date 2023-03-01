@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:volleyscore/pages/matchPage.dart';
@@ -20,9 +22,12 @@ class _CreateTeamsState extends State<CreateTeams> {
   void shuffleTeams() {
     setState(() {
       widget.players.shuffle();
-      int half = widget.players.length ~/ 2;
-      team1.players = widget.players.sublist(0, half);
-      team2.players = widget.players.sublist(half);
+      final half = widget.players.length ~/ 2;
+      final firstHalf = widget.players.sublist(0, half);
+      final secondHalf = widget.players.sublist(half);
+      final headsOrTails = Random.secure().nextBool();
+      team1.players = headsOrTails ? firstHalf : secondHalf;
+      team2.players = headsOrTails ? secondHalf : firstHalf;
     });
   }
 
@@ -43,11 +48,18 @@ class _CreateTeamsState extends State<CreateTeams> {
     super.dispose();
   }
 
-  Widget buildTeamColumn(bool isTeam1) {
+  Widget buildTeamColumn(bool isTeam1, PlayerMatchesStorage store) {
     final team = isTeam1 ? team1 : team2;
     final otherTeam = isTeam1 ? team2 : team1;
     final controller = isTeam1 ? team1LabelController : team2LabelController;
     final playerCount = team.players.length;
+
+    final averageWinRate = team.players.isEmpty
+        ? 0
+        : team.players
+                .map((e) => store.getPlayerWinRate(e))
+                .reduce((a, b) => a + b) /
+            team.players.length;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -73,6 +85,10 @@ class _CreateTeamsState extends State<CreateTeams> {
           '${team.players.length} Giocator${playerCount == 1 ? 'e' : 'i'}',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
+        Text(
+          '${averageWinRate.toInt().toString()}% Winrate medio',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         const SizedBox(height: 20),
         ...team.players.map((e) {
           var elements = [
@@ -84,21 +100,18 @@ class _CreateTeamsState extends State<CreateTeams> {
             elements = elements.reversed.toList();
           }
 
-          return SizedBox(
-            width: 170,
-            child: Card(
-              child: ListTile(
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: elements,
-                ),
-                onTap: () {
-                  setState(() {
-                    otherTeam.players.add(e);
-                    team.players.remove(e);
-                  });
-                },
+          return Card(
+            child: ListTile(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: elements,
               ),
+              onTap: () {
+                setState(() {
+                  otherTeam.players.add(e);
+                  team.players.remove(e);
+                });
+              },
             ),
           );
         }).toList(),
@@ -108,6 +121,8 @@ class _CreateTeamsState extends State<CreateTeams> {
 
   @override
   Widget build(BuildContext context) {
+    final store = Provider.of<PlayerMatchesStorage>(context, listen: false);
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -127,17 +142,17 @@ class _CreateTeamsState extends State<CreateTeams> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: buildTeamColumn(true),
+                          child: buildTeamColumn(true, store),
                         ),
                         Expanded(
-                          child: buildTeamColumn(false),
+                          child: buildTeamColumn(false, store),
                         ),
                       ],
                     ),
                   ),
                   Positioned(
                     bottom: 10,
-                    right: MediaQuery.of(context).size.width / 2 - 50, 
+                    right: MediaQuery.of(context).size.width / 2 - 50,
                     child: Ink(
                       decoration: const ShapeDecoration(
                         shape: CircleBorder(),

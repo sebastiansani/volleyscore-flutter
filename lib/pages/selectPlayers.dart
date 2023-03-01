@@ -33,9 +33,8 @@ class SelectPlayers extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final player = store.players[index];
 
-                            return SizedBox(
-                              height: 60,
-                              child: Card(
+                            return Card(
+                              child: Center(
                                 child: ListTile(
                                   title: Text(player.name),
                                   trailing: Checkbox(
