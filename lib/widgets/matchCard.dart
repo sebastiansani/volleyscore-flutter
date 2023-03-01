@@ -15,7 +15,7 @@ class MatchCard extends StatelessWidget {
     return Card(
       child: Center(
         child: ListTile(
-          leading: Text('(${match.team1.score} - ${match.team2.score})',
+          leading: Text('[${match.team1.score} - ${match.team2.score}]',
               style: const TextStyle(fontWeight: FontWeight.bold)),
           title: Text('${match.team1.name} vs ${match.team2.name}'),
           subtitle: Text(

@@ -51,6 +51,9 @@ class _MatchPageState extends State<MatchPage> {
     }
 
     Widget buildScoreCard(VolleyScoreTeam team) {
+      final controller =
+          TextEditingController(text: team.score.toString().padLeft(2, '0'));
+
       return SizedBox(
         width: 100,
         child: Card(
@@ -58,17 +61,29 @@ class _MatchPageState extends State<MatchPage> {
             children: [
               IconButton(
                 onPressed: () {
-                  if (isMatchOver) {
-                    return;
-                  }
                   setState(() {
                     team.score++;
                   });
                 },
                 icon: const Icon(Icons.add),
               ),
-              Text(
-                team.score.toString().padLeft(2, '0'),
+              TextField(
+                textAlign: TextAlign.center,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                ),
+                keyboardType: TextInputType.number,
+                onSubmitted: (value) {
+                  setState(() {
+                    final parsedValue = int.tryParse(value);
+                    if (parsedValue == null || parsedValue < 0) {
+                      return;
+                    }
+                    team.score = parsedValue;
+                    controller.text = value;
+                  });
+                },
+                controller: controller,
                 style: titleStyle,
               ),
               IconButton(
