@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class VolleyScoreTeam {
-  List<Player> players;
+  List<VolleyScorePlayer> players;
   String name;
   int score = 0;
 
@@ -13,7 +13,7 @@ class VolleyScoreTeam {
   VolleyScoreTeam.fromJson(Map<String, dynamic> json)
       : name = json['name'],
         players = (json['players'] as List)
-            .map((player) => Player.fromJson(player))
+            .map((player) => VolleyScorePlayer.fromJson(player))
             .toList(),
         score = json['score'];
 
@@ -35,7 +35,7 @@ class VolleyScoreMatch {
   VolleyScoreTeam get losingTeam => team1.score > team2.score ? team2 : team1;
 
   // get players
-  List<Player> get players => [
+  List<VolleyScorePlayer> get players => [
         ...team1.players,
         ...team2.players,
       ];
@@ -54,17 +54,25 @@ class VolleyScoreMatch {
         'team2': team2.toJson(),
         'date': date.toIso8601String(),
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is VolleyScoreMatch && runtimeType == other.runtimeType && key == other.key;
+
+  @override
+  int get hashCode => key.hashCode;
 }
 
-class Player {
+class VolleyScorePlayer {
   final String name;
   bool isPlaying;
 
   String get key => name;
 
-  Player(this.name, {this.isPlaying = true});
+  VolleyScorePlayer(this.name, {this.isPlaying = true});
 
-  Player.fromJson(Map<String, dynamic> json)
+  VolleyScorePlayer.fromJson(Map<String, dynamic> json)
       : name = json['name'],
         isPlaying = true;
 
@@ -75,7 +83,7 @@ class Player {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Player && runtimeType == other.runtimeType && key == other.key;
+      other is VolleyScorePlayer && runtimeType == other.runtimeType && key == other.key;
 
   @override
   int get hashCode => key.hashCode;
@@ -83,7 +91,7 @@ class Player {
 
 class PlayerMatchesStorage with ChangeNotifier {
   late List<VolleyScoreMatch> _matches;
-  late List<Player> _players;
+  late List<VolleyScorePlayer> _players;
   late SharedPreferences _prefs;
 
   void loadPrefs(prefs) {
@@ -96,7 +104,7 @@ class PlayerMatchesStorage with ChangeNotifier {
     final playersString = _prefs.getString('players');
     if (playersString != null) {
       _players = (jsonDecode(playersString) as List)
-          .map((player) => Player.fromJson(player))
+          .map((player) => VolleyScorePlayer.fromJson(player))
           .toList();
     } else {
       _players = [];
@@ -123,19 +131,19 @@ class PlayerMatchesStorage with ChangeNotifier {
   }
 
   List<VolleyScoreMatch> get matches => _matches;
-  List<Player> get players => _players;
+  List<VolleyScorePlayer> get players => _players;
 
-  List<VolleyScoreMatch> getPlayerMatches(Player player) {
+  List<VolleyScoreMatch> getPlayerMatches(VolleyScorePlayer player) {
     return _matches.where((match) => match.players.contains(player)).toList();
   }
 
-  int getPlayerNumberOfWonMatches(Player player) {
+  int getPlayerNumberOfWonMatches(VolleyScorePlayer player) {
     return getPlayerMatches(player)
         .where((match) => match.winningTeam.players.contains(player))
         .length;
   }
 
-  int getPlayerWinRate(Player player) {
+  int getPlayerWinRate(VolleyScorePlayer player) {
     int wonMatches = getPlayerNumberOfWonMatches(player);
     int totalMatches = getPlayerMatches(player).length;
     if (totalMatches == 0) {
@@ -144,7 +152,7 @@ class PlayerMatchesStorage with ChangeNotifier {
     return (wonMatches / totalMatches * 100).round();
   }
 
-  void addPlayer(Player player) {
+  void addPlayer(VolleyScorePlayer player) {
     if (!_players.contains(player)) {
       _players.add(player);
     }
@@ -152,13 +160,13 @@ class PlayerMatchesStorage with ChangeNotifier {
     savePlayers();
   }
 
-  void removePlayer(Player player) {
+  void removePlayer(VolleyScorePlayer player) {
     _players.remove(player);
     notifyListeners();
     savePlayers();
   }
 
-  void togglePlayerPlaying(Player player) {
+  void togglePlayerPlaying(VolleyScorePlayer player) {
     player.isPlaying = !player.isPlaying;
     notifyListeners();
   }
@@ -170,10 +178,7 @@ class PlayerMatchesStorage with ChangeNotifier {
   }
 
   void addMatch(VolleyScoreMatch match) {
-    final idx = matches.indexWhere((m) => m.key == match.key);
-    if (idx != -1) {
-      _matches[idx] = match;
-    } else {
+    if (!_matches.contains(match)) {
       _matches.add(match);
     }
     notifyListeners();

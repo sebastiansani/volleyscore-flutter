@@ -2,18 +2,18 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:volleyscore/pages/matchPage.dart';
+import 'package:volleyscore/pages/match_page.dart';
 import 'package:volleyscore/storage.dart';
 
-class CreateTeams extends StatefulWidget {
-  const CreateTeams({super.key, required this.players});
-  final List<Player> players;
+class CreateTeamsPage extends StatefulWidget {
+  const CreateTeamsPage({super.key, required this.players});
+  final List<VolleyScorePlayer> players;
 
   @override
-  State<CreateTeams> createState() => _CreateTeamsState();
+  State<CreateTeamsPage> createState() => _CreateTeamsPageState();
 }
 
-class _CreateTeamsState extends State<CreateTeams> {
+class _CreateTeamsPageState extends State<CreateTeamsPage> {
   late TextEditingController team1LabelController;
   late TextEditingController team2LabelController;
   late VolleyScoreTeam team1;

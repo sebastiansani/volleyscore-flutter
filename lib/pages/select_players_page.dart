@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:volleyscore/pages/createTeams.dart';
+import 'package:volleyscore/pages/create_teams_page.dart';
 import 'package:volleyscore/storage.dart';
 
-class SelectPlayers extends StatelessWidget {
-  const SelectPlayers({super.key});
+class SelectPlayersPage extends StatelessWidget {
+  const SelectPlayersPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class SelectPlayers extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CreateTeams(players: activePlayers),
+                      builder: (context) => CreateTeamsPage(players: activePlayers),
                     ),
                   );
                 },

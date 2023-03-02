@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:volleyscore/pages/homePage.dart';
+import 'package:volleyscore/pages/home_page.dart';
 import 'package:volleyscore/storage.dart';
 
 class MatchPage extends StatefulWidget {
@@ -123,6 +123,24 @@ class _MatchPageState extends State<MatchPage> {
       child: Scaffold(
           appBar: AppBar(
             title: const Text('Partita'),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    final store = Provider.of<PlayerMatchesStorage>(context,
+                        listen: false);
+                    store.removeMatch(match);
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomePage(),
+                        ),
+                        (route) => false);
+                  });
+                },
+                icon: const Icon(Icons.clear),
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.only(bottom: 80),
