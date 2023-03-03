@@ -66,6 +66,37 @@ class _HomePageState extends State<HomePage> {
                       return Card(
                         child: Center(
                           child: ListTile(
+                            leading: Flex(
+                                direction: Axis.vertical,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ShaderMask(
+                                    blendMode: BlendMode.srcIn,
+                                    shaderCallback: (bounds) =>
+                                        LinearGradient(colors: [
+                                      const Color.fromARGB(255, 53, 53, 53),
+                                      Theme.of(context).primaryColor,
+                                    ]).createShader(
+                                      Rect.fromLTWH(
+                                          0, 0, bounds.width, bounds.height),
+                                    ),
+                                    child: SizedBox(
+                                      width: 35,
+                                      child: Text(
+                                        store
+                                            .getPlayerScore(player)
+                                            .toString()
+                                            .padLeft(2, '0'),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                          height: 1,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ]),
                             title: Text(player.name),
                             subtitle: Text(
                                 'Winrate: ${store.getPlayerWinRate(player)}%'),
@@ -165,7 +196,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
           currentIndex: _selectedIndex,
-          type: BottomNavigationBarType.shifting, // TODO: change to shifting
+          type: BottomNavigationBarType.shifting,
           onTap: (value) => setState(() => _selectedIndex = value),
           selectedItemColor: Theme.of(context).primaryColor,
           unselectedItemColor: Colors.grey,

@@ -31,6 +31,37 @@ class _CreateTeamsPageState extends State<CreateTeamsPage> {
     });
   }
 
+  int getShuffleScore(
+      List<VolleyScorePlayer> players, PlayerMatchesStorage store) {
+    final half = widget.players.length ~/ 2;
+    final firstHalf = players.sublist(0, half);
+    final secondHalf = players.sublist(half);
+    return (firstHalf
+                .map((e) => store.getPlayerScore(e))
+                .reduce((a, b) => a + b) -
+            secondHalf
+                .map((e) => store.getPlayerScore(e))
+                .reduce((a, b) => a + b))
+        .abs();
+  }
+
+  void smartShuffle(PlayerMatchesStorage store) {
+    setState(() {
+      final tries = List<int>.generate(10, (i) => i);
+      final bestShuffle = tries
+          .map((e) => [...widget.players]..shuffle())
+          .reduce((a, b) =>
+              getShuffleScore(a, store) < getShuffleScore(b, store) ? a : b);
+
+      final half = widget.players.length ~/ 2;
+      final firstHalf = bestShuffle.sublist(0, half);
+      final secondHalf = bestShuffle.sublist(half);
+      final headsOrTails = Random.secure().nextBool();
+      team1.players = headsOrTails ? firstHalf : secondHalf;
+      team2.players = headsOrTails ? secondHalf : firstHalf;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -54,10 +85,10 @@ class _CreateTeamsPageState extends State<CreateTeamsPage> {
     final controller = isTeam1 ? team1LabelController : team2LabelController;
     final playerCount = team.players.length;
 
-    final averageWinRate = team.players.isEmpty
+    final averageScore = team.players.isEmpty
         ? 0
         : team.players
-                .map((e) => store.getPlayerWinRate(e))
+                .map((e) => store.getPlayerScore(e))
                 .reduce((a, b) => a + b) /
             team.players.length;
 
@@ -86,7 +117,7 @@ class _CreateTeamsPageState extends State<CreateTeamsPage> {
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         Text(
-          '${averageWinRate.toInt().toString()}% Winrate medio',
+          '${averageScore.toInt().toString()} Score medio',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 20),
@@ -151,18 +182,33 @@ class _CreateTeamsPageState extends State<CreateTeamsPage> {
                     ),
                   ),
                   Positioned(
-                    bottom: 10,
-                    right: MediaQuery.of(context).size.width / 2 - 50,
-                    child: Ink(
-                      decoration: const ShapeDecoration(
-                        shape: CircleBorder(),
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          shuffleTeams();
-                        },
-                        child: const Icon(Icons.shuffle),
-                      ),
+                    bottom: 20,
+                    child: Row(
+                      children: [
+                        Ink(
+                          decoration: const ShapeDecoration(
+                            shape: CircleBorder(),
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              shuffleTeams();
+                            },
+                            child: const Icon(Icons.shuffle),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Ink(
+                          decoration: const ShapeDecoration(
+                            shape: CircleBorder(),
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              smartShuffle(store);
+                            },
+                            child: const Icon(Icons.lightbulb),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ]),

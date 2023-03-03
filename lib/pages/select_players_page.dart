@@ -28,11 +28,24 @@ class SelectPlayersPage extends StatelessWidget {
                       ? const Center(child: Text('Nessun giocatore'))
                       : ListView.builder(
                           shrinkWrap: true,
-                          itemCount: store.players.length,
+                          itemCount: store.players.length + 1,
                           padding: const EdgeInsets.only(bottom: 80),
                           itemBuilder: (context, index) {
-                            final player = store.players[index];
+                            if (index == 0) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      store.toggleAllPlayersPlaying();
+                                    },
+                                    child: const Text('Seleziona tutti'),
+                                  )
+                                ],
+                              );
+                            }
 
+                            final player = store.players[index - 1];
                             return Card(
                               child: Center(
                                 child: ListTile(
@@ -62,7 +75,8 @@ class SelectPlayersPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CreateTeamsPage(players: activePlayers),
+                      builder: (context) =>
+                          CreateTeamsPage(players: activePlayers),
                     ),
                   );
                 },
