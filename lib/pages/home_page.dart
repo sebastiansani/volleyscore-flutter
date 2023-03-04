@@ -114,6 +114,7 @@ class _HomePageState extends State<HomePage> {
                   onSubmitted: (_) => onSubmit(),
                   controller: fieldText,
                   autofocus: true,
+                  textCapitalization: TextCapitalization.words,
                 ),
               ),
             );

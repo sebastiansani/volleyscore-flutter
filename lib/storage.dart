@@ -211,8 +211,10 @@ class PlayerMatchesStorage with ChangeNotifier {
 
   void addMatch(VolleyScoreMatch match) {
     if (!_matches.contains(match)) {
-      _matches.add(match);
+      _matches.insert(0, match);
     }
+    _matches
+        .sort((a, b) => b.date.compareTo(a.date)); //TODO: remove in the future
     notifyListeners();
     saveMatches();
   }
