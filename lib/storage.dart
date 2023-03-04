@@ -213,8 +213,6 @@ class PlayerMatchesStorage with ChangeNotifier {
     if (!_matches.contains(match)) {
       _matches.insert(0, match);
     }
-    _matches
-        .sort((a, b) => b.date.compareTo(a.date)); //TODO: remove in the future
     notifyListeners();
     saveMatches();
   }
