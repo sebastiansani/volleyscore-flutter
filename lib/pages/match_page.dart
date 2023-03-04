@@ -125,20 +125,40 @@ class _MatchPageState extends State<MatchPage> {
             title: const Text('Partita'),
             actions: [
               IconButton(
+                iconSize: 25,
                 onPressed: () {
-                  setState(() {
-                    final store = Provider.of<PlayerMatchesStorage>(context,
-                        listen: false);
-                    store.removeMatch(match);
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Elimina match'),
+                      content: const Text('Sei sicuro di voler cancellare questo match?'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Indietro'),
                         ),
-                        (route) => false);
-                  });
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              final store = Provider.of<PlayerMatchesStorage>(
+                                  context,
+                                  listen: false);
+                              store.removeMatch(match);
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const HomePage(),
+                                  ),
+                                  (route) => false);
+                            });
+                          },
+                          child: const Text('Elimina'),
+                        ),
+                      ],
+                    ),
+                  );
                 },
-                icon: const Icon(Icons.clear),
+                icon: const Icon(Icons.delete),
               ),
             ],
           ),

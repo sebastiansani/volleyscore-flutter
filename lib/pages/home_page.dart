@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:volleyscore/pages/select_players_page.dart';
 import 'package:volleyscore/storage.dart';
 import 'package:volleyscore/widgets/match_card.dart';
+import 'package:volleyscore/widgets/player_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -62,53 +63,7 @@ class _HomePageState extends State<HomePage> {
                         );
                       }
 
-                      final player = store.players[index - 1];
-                      return Card(
-                        child: Center(
-                          child: ListTile(
-                            leading: Flex(
-                                direction: Axis.vertical,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (bounds) =>
-                                        LinearGradient(colors: [
-                                      const Color.fromARGB(255, 53, 53, 53),
-                                      Theme.of(context).primaryColor,
-                                    ]).createShader(
-                                      Rect.fromLTWH(
-                                          0, 0, bounds.width, bounds.height),
-                                    ),
-                                    child: SizedBox(
-                                      width: 35,
-                                      child: Text(
-                                        store
-                                            .getPlayerScore(player)
-                                            .toString()
-                                            .padLeft(2, '0'),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
-                                          height: 1,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                                ]),
-                            title: Text(player.name),
-                            subtitle: Text(
-                                'Winrate: ${store.getPlayerWinRate(player)}%'),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                store.removePlayer(player);
-                              },
-                            ),
-                          ),
-                        ),
-                      );
+                      return PlayerCard(player: store.players[index - 1]);
                     },
                   ),
           ),

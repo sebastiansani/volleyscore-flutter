@@ -19,15 +19,19 @@ class _CreateTeamsPageState extends State<CreateTeamsPage> {
   late VolleyScoreTeam team1;
   late VolleyScoreTeam team2;
 
+  void assignTeamsRandomly(List<VolleyScorePlayer> players) {
+    final half = players.length ~/ 2;
+    final firstHalf = players.sublist(0, half);
+    final secondHalf = players.sublist(half);
+    final headsOrTails = Random.secure().nextBool();
+    team1.players = headsOrTails ? firstHalf : secondHalf;
+    team2.players = headsOrTails ? secondHalf : firstHalf;
+  }
+
   void shuffleTeams() {
     setState(() {
       widget.players.shuffle();
-      final half = widget.players.length ~/ 2;
-      final firstHalf = widget.players.sublist(0, half);
-      final secondHalf = widget.players.sublist(half);
-      final headsOrTails = Random.secure().nextBool();
-      team1.players = headsOrTails ? firstHalf : secondHalf;
-      team2.players = headsOrTails ? secondHalf : firstHalf;
+      assignTeamsRandomly(widget.players);
     });
   }
 
@@ -53,12 +57,7 @@ class _CreateTeamsPageState extends State<CreateTeamsPage> {
           .reduce((a, b) =>
               getShuffleScore(a, store) < getShuffleScore(b, store) ? a : b);
 
-      final half = widget.players.length ~/ 2;
-      final firstHalf = bestShuffle.sublist(0, half);
-      final secondHalf = bestShuffle.sublist(half);
-      final headsOrTails = Random.secure().nextBool();
-      team1.players = headsOrTails ? firstHalf : secondHalf;
-      team2.players = headsOrTails ? secondHalf : firstHalf;
+      assignTeamsRandomly(bestShuffle);
     });
   }
 
