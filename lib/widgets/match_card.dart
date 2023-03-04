@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:volleyscore/pages/match_page.dart';
 import 'package:volleyscore/storage.dart';
 
@@ -42,37 +43,61 @@ class MatchCard extends StatelessWidget {
                   ),
                 ),
             onLongPress: () {
-              showDialog<String>(
+              showModalBottomSheet<void>(
                 context: context,
-                builder: (BuildContext context) => AlertDialog(
-                  title: const Text('Duplica partita'),
-                  content: const Text(
-                      'Sei sicuro di voler duplicare questa partita?'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Indietro'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        final team1 = VolleyScoreTeam(
-                            match.team1.name, match.team1.players);
-                        final team2 = VolleyScoreTeam(
-                            match.team2.name, match.team2.players);
-                        final newMatch = VolleyScoreMatch(team1, team2);
-                        Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                MatchPage(propMatch: newMatch),
+                builder: (BuildContext context) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            final team1 = VolleyScoreTeam(
+                                match.team1.name, match.team1.players);
+                            final team2 = VolleyScoreTeam(
+                                match.team2.name, match.team2.players);
+                            final newMatch = VolleyScoreMatch(team1, team2);
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MatchPage(propMatch: newMatch),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Icon(Icons.copy),
+                              SizedBox(width: 8),
+                              Text('Duplica'),
+                            ],
                           ),
-                        );
-                      },
-                      child: const Text('Duplica'),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            final store = Provider.of<PlayerMatchesStorage>(
+                                context,
+                                listen: false);
+                            store.removeMatch(match);
+                            Navigator.pop(context);
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Icon(Icons.delete),
+                              SizedBox(width: 8),
+                              Text('Elimina'),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               );
             }),
       ),

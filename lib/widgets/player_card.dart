@@ -13,7 +13,9 @@ class PlayerCard extends StatelessWidget {
     return Card(
       child: Center(
         child: ListTile(
-          leading: Flex(
+          title: Text(player.name),
+          subtitle: Text('Winrate: ${store.getPlayerWinRate(player)}%'),
+          trailing: Flex(
               direction: Axis.vertical,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -39,34 +41,36 @@ class PlayerCard extends StatelessWidget {
                   ),
                 ),
               ]),
-          title: Text(player.name),
-          subtitle: Text('Winrate: ${store.getPlayerWinRate(player)}%'),
-          trailing: IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              showDialog<String>(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                  title: const Text('Elimina giocatore'),
-                  content: const Text(
-                      'Sei sicuro di voler cancellare questo giocatore?'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Indietro'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        store.removePlayer(player);
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Elimina'),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+          onLongPress: () {
+            showModalBottomSheet<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          store.removePlayer(player);
+                          Navigator.pop(context);
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Icon(Icons.delete),
+                            SizedBox(width: 8),
+                            Text('Elimina'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
         ),
       ),
     );
