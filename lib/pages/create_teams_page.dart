@@ -14,8 +14,6 @@ class CreateTeamsPage extends StatefulWidget {
 }
 
 class _CreateTeamsPageState extends State<CreateTeamsPage> {
-  late TextEditingController team1LabelController;
-  late TextEditingController team2LabelController;
   late VolleyScoreTeam team1;
   late VolleyScoreTeam team2;
 
@@ -66,22 +64,14 @@ class _CreateTeamsPageState extends State<CreateTeamsPage> {
     super.initState();
     team1 = VolleyScoreTeam('Los Cojos', []);
     team2 = VolleyScoreTeam('Bomberos', []);
-    team1LabelController = TextEditingController(text: team1.name);
-    team2LabelController = TextEditingController(text: team2.name);
     shuffleTeams();
   }
 
-  @override
-  void dispose() {
-    team1LabelController.dispose();
-    team2LabelController.dispose();
-    super.dispose();
-  }
 
   Widget buildTeamColumn(bool isTeam1, PlayerMatchesStorage store) {
     final team = isTeam1 ? team1 : team2;
     final otherTeam = isTeam1 ? team2 : team1;
-    final controller = isTeam1 ? team1LabelController : team2LabelController;
+    final controller = TextEditingController(text: team.name);
     final playerCount = team.players.length;
 
     final averageScore = team.players.isEmpty
