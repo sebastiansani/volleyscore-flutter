@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:volleyscore/pages/player_page.dart';
 import 'package:volleyscore/storage.dart';
 
 class PlayerCard extends StatelessWidget {
@@ -16,31 +17,32 @@ class PlayerCard extends StatelessWidget {
           title: Text(player.name),
           subtitle: Text('Winrate: ${store.getPlayerWinRate(player)}%'),
           trailing: Flex(
-              direction: Axis.vertical,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ShaderMask(
-                  blendMode: BlendMode.srcIn,
-                  shaderCallback: (bounds) => LinearGradient(colors: [
-                    const Color.fromARGB(255, 53, 53, 53),
-                    Theme.of(context).primaryColor,
-                  ]).createShader(
-                    Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                  ),
-                  child: SizedBox(
-                    width: 35,
-                    child: Text(
-                      store.getPlayerScore(player).toString().padLeft(2, '0'),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        height: 1,
-                      ),
-                      textAlign: TextAlign.center,
+            direction: Axis.vertical,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ShaderMask(
+                blendMode: BlendMode.srcIn,
+                shaderCallback: (bounds) => LinearGradient(colors: [
+                  const Color.fromARGB(255, 53, 53, 53),
+                  Theme.of(context).primaryColor,
+                ]).createShader(
+                  Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                ),
+                child: SizedBox(
+                  width: 35,
+                  child: Text(
+                    store.getPlayerScore(player).toString().padLeft(2, '0'),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      height: 1,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ]),
+              ),
+            ],
+          ),
           onLongPress: () {
             showModalBottomSheet<void>(
               context: context,
@@ -71,6 +73,12 @@ class PlayerCard extends StatelessWidget {
               },
             );
           },
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PlayerPage(propPlayer: player),
+            ),
+          ),
         ),
       ),
     );

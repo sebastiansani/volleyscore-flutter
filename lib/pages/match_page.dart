@@ -72,7 +72,10 @@ class _MatchPageState extends State<MatchPage> {
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                 ),
-                keyboardType: TextInputType.number,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: false,
+                  signed: false,
+                ),
                 onSubmitted: (value) {
                   setState(() {
                     final parsedValue = int.tryParse(value);
@@ -83,6 +86,13 @@ class _MatchPageState extends State<MatchPage> {
                     controller.text = value;
                   });
                 },
+                onTapOutside: (event) => setState(() {
+                  final parsedValue = int.tryParse(controller.text) ?? 0;
+                  if (parsedValue < 0) {
+                    return;
+                  }
+                  team.score = parsedValue;
+                }),
                 controller: controller,
                 style: titleStyle,
               ),

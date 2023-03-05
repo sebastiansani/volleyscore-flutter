@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:volleyscore/math_utils.dart';
+import 'package:volleyscore/score_calculator.dart';
 
 class VolleyScoreTeam {
   List<VolleyScorePlayer> players;
@@ -138,43 +138,12 @@ class PlayerMatchesStorage with ChangeNotifier {
   List<VolleyScoreMatch> get matches => _matches;
   List<VolleyScorePlayer> get players => _players;
 
-  List<VolleyScoreMatch> getPlayerMatches(VolleyScorePlayer player) {
-    return _matches.where((match) => match.players.contains(player)).toList();
-  }
-
-  Iterable<VolleyScoreMatch> getPlayerWonMatches(VolleyScorePlayer player) {
-    return getPlayerMatches(player)
-        .where((match) => match.winningTeam.players.contains(player));
-  }
-
   int getPlayerWinRate(VolleyScorePlayer player) {
-    final wonMatches = getPlayerWonMatches(player).length;
-    final totalMatches = getPlayerMatches(player).length;
-    if (totalMatches == 0) {
-      return 0;
-    }
-    return (wonMatches / totalMatches * 100).round();
+    return ScoreCalculator.calculateWinRate(player, _matches);
   }
 
   int getPlayerScore(VolleyScorePlayer player) {
-    final matches = getPlayerMatches(player);
-    if (matches.isEmpty) {
-      return 50;
-    }
-
-    double scoreOffset = 0;
-    for (final match in matches) {
-      double matchOffset =
-          (match.winningTeam.score - match.losingTeam.score).toDouble();
-      if (match.losingTeam.players.contains(player)) {
-        matchOffset = -matchOffset;
-      }
-      matchOffset /= match.winningTeam.score;
-      scoreOffset += matchOffset;
-    }
-    scoreOffset /= matches.length;
-
-    return ((tanh(scoreOffset) + 1) * 50).round();
+    return ScoreCalculator.calculateScore(player, _matches);
   }
 
   void addPlayer(VolleyScorePlayer player) {

@@ -67,7 +67,6 @@ class _CreateTeamsPageState extends State<CreateTeamsPage> {
     shuffleTeams();
   }
 
-
   Widget buildTeamColumn(bool isTeam1, PlayerMatchesStorage store) {
     final team = isTeam1 ? team1 : team2;
     final otherTeam = isTeam1 ? team2 : team1;
@@ -98,6 +97,9 @@ class _CreateTeamsPageState extends State<CreateTeamsPage> {
               controller.text = value;
             });
           },
+          onTapOutside: (event) => setState(() {
+            team.name = controller.text;
+          }),
           controller: controller,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
