@@ -227,7 +227,7 @@ class _PlayerPageState extends State<PlayerPage> {
                       ),
                     ),
                     ...playerMatches.map(
-                      (e) => MatchCard(match: e),
+                      (e) => MatchCard(match: e, isEditable: false),
                     )
                   ],
                 ),

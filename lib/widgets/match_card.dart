@@ -5,8 +5,9 @@ import 'package:volleyscore/pages/match_page.dart';
 import 'package:volleyscore/storage.dart';
 
 class MatchCard extends StatelessWidget {
-  const MatchCard({super.key, required this.match});
+  const MatchCard({super.key, required this.match, this.isEditable = true});
   final VolleyScoreMatch match;
+  final bool isEditable;
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +40,12 @@ class MatchCard extends StatelessWidget {
             onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MatchPage(propMatch: match),
+                    builder: (context) =>
+                        MatchPage(propMatch: match, isEditable: isEditable),
                   ),
                 ),
             onLongPress: () {
+              if (!isEditable) return;
               showModalBottomSheet<void>(
                 context: context,
                 builder: (BuildContext context) {

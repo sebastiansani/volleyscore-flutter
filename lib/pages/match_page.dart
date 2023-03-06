@@ -5,8 +5,9 @@ import 'package:volleyscore/pages/home_page.dart';
 import 'package:volleyscore/storage.dart';
 
 class MatchPage extends StatefulWidget {
-  const MatchPage({super.key, required this.propMatch});
+  const MatchPage({super.key, required this.propMatch, this.isEditable = true});
   final VolleyScoreMatch propMatch;
+  final bool isEditable;
 
   @override
   State<MatchPage> createState() => _MatchPageState();
@@ -59,15 +60,18 @@ class _MatchPageState extends State<MatchPage> {
         child: Card(
           child: Column(
             children: [
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    team.score++;
-                  });
-                },
-                icon: const Icon(Icons.add),
-              ),
+              widget.isEditable
+                  ? IconButton(
+                      onPressed: () {
+                        setState(() {
+                          team.score++;
+                        });
+                      },
+                      icon: const Icon(Icons.add),
+                    )
+                  : Container(),
               TextField(
+                enabled: widget.isEditable,
                 textAlign: TextAlign.center,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
@@ -96,17 +100,19 @@ class _MatchPageState extends State<MatchPage> {
                 controller: controller,
                 style: titleStyle,
               ),
-              IconButton(
-                onPressed: () {
-                  if (team.score == 0) {
-                    return;
-                  }
-                  setState(() {
-                    team.score--;
-                  });
-                },
-                icon: const Icon(Icons.remove),
-              ),
+              widget.isEditable
+                  ? IconButton(
+                      onPressed: () {
+                        if (team.score == 0) {
+                          return;
+                        }
+                        setState(() {
+                          team.score--;
+                        });
+                      },
+                      icon: const Icon(Icons.remove),
+                    )
+                  : Container(),
             ],
           ),
         ),
@@ -131,58 +137,61 @@ class _MatchPageState extends State<MatchPage> {
 
     return SafeArea(
       child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Partita'),
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 80),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(
-                    DateFormat('dd/MM/yyyy HH:mm').format(match.date),
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      buildScoreCard(match.team1),
-                      Text(' - ', style: titleStyle),
-                      buildScoreCard(match.team2),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  statusWidget,
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildTeamColumn(match.team1),
-                      const SizedBox(width: 40),
-                      buildTeamColumn(match.team2),
-                    ],
-                  ),
-                ],
-              ),
+        appBar: AppBar(
+          title: const Text('Partita'),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 80),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Text(
+                  DateFormat('dd/MM/yyyy HH:mm').format(match.date),
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    buildScoreCard(match.team1),
+                    Text(' - ', style: titleStyle),
+                    buildScoreCard(match.team2),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                statusWidget,
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildTeamColumn(match.team1),
+                    const SizedBox(width: 40),
+                    buildTeamColumn(match.team2),
+                  ],
+                ),
+              ],
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              final store =
-                  Provider.of<PlayerMatchesStorage>(context, listen: false);
-              store.addMatch(match);
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomePage(),
-                  ),
-                  (route) => false);
-            },
-            child: const Icon(Icons.check),
-          )),
+        ),
+        floatingActionButton: widget.isEditable
+            ? FloatingActionButton(
+                onPressed: () {
+                  final store =
+                      Provider.of<PlayerMatchesStorage>(context, listen: false);
+                  store.addMatch(match);
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomePage(),
+                      ),
+                      (route) => false);
+                },
+                child: const Icon(Icons.check),
+              )
+            : Container(),
+      ),
     );
   }
 }
