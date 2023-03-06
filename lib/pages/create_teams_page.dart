@@ -124,6 +124,9 @@ class _CreateTeamsPageState extends State<CreateTeamsPage> {
 
           return Card(
             child: ListTile(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: elements,

@@ -14,6 +14,9 @@ class PlayerCard extends StatelessWidget {
     return Card(
       child: Center(
         child: ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           title: Text(player.name),
           subtitle: Text('Winrate: ${store.getPlayerWinRate(player)}%'),
           trailing: Flex(

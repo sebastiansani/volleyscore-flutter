@@ -14,6 +14,9 @@ class MatchCard extends StatelessWidget {
     return Card(
       child: Center(
         child: ListTile(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
             trailing: Flex(
                 direction: Axis.vertical,
                 mainAxisAlignment: MainAxisAlignment.center,
