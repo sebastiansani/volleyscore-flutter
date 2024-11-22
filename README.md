@@ -1,3 +1,3 @@
 # volleyscore
 
-A new Flutter project.
+Keeps track of volley matches and allows for rank-based team matching.
